@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Food Ordering System</title>
+git commit -m "Initial commit"    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(rgba(255, 248, 238, 0.95), rgba(255, 248, 238, 0.95)),
+                        url("https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=80");
+            background-size: cover;
+            background-attachment: fixed;
+            color: #2b211c;
+        }
+
+        .restaurant-header {
+            padding: 30px 20px;
+            text-align: center;
+            color: white;
+            background: linear-gradient(135deg, #b3261e, #e85d04);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            width: 72px;
+            height: 72px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+            overflow: hidden;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .header-text {
+            text-align: left;
+        }
+
+        .restaurant-header h1 {
+            font-size: 2.6rem;
+            margin-bottom: 6px;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .order-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 20px 25px;
+            background: #7f1d1d;
+            color: white;
+        }
+
+        .panel-header h2 {
+            font-size: 1.6rem;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            padding: 25px;
+        }
+
+        .menu-card {
+            border: 1px solid #f0d9c0;
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 30px rgba(232, 93, 4, 0.2);
+        }
+
+        .menu-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .item-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .item-price {
+            color: #e85d04;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .item-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #e85d04;
+        }
+
+        input[type="number"] {
+            width: 70px;
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        .customer-form {
+            padding: 25px;
+            display: grid;
+            gap: 18px;
+        }
+
+        .running-total {
+            margin: 0 25px 25px;
+            padding: 15px 20px;
+            background: #fff4e6;
+            border: 1px dashed #e85d04;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            color: #7f1d1d;
+        }
+
+        .running-total span:last-child {
+            font-size: 1.3rem;
+            color: #e85d04;
+        }
+
+        label {
+            font-weight: bold;
+            color: #5b2a18;
+        }
+
+        input[type="text"], input[type="tel"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d9b99d;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        button {
+            background: #e85d04;
+            color: white;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        button:hover {
+            background: #b3261e;
+        }
+
+        /* Improved Summary Section */
+        .summary-panel {
+            margin-top: 25px;
+            padding: 25px;
+            display: none;
+        }
+
+        .summary-panel.show {
+            display: block;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px dashed #ddd;
+        }
+
+        .grand-total {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #7f1d1d;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 3px solid #e85d04;
+            text-align: center;
+        }
+
+        .thank-you {
+            margin-top: 25px;
+            padding: 20px;
+            background: #10b981;
+            color: white;
+            text-align: center;
+            border-radius: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .order-meta {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0d9c0;
+            font-size: 0.95rem;
+            color: #5b2a18;
+        }
+
+        .print-btn {
+            background: #7f1d1d;
+            margin-top: 15px;
+        }
+
+        .print-btn:hover {
+            background: #5b2a18;
+        }
+
+        @media print {
+            .restaurant-header, main > .order-layout, .print-btn {
+                display: none !important;
+            }
+            .summary-panel {
+                box-shadow: none;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .order-layout {
+                grid-template-columns: 1fr;
+            }
+            .header-content {
+                flex-direction: column;
+            }
+            .header-text {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="restaurant-header">
+        <div class="header-content">
+            <div class="logo">
+                <!-- Replace this src with the path to your actual logo file, e.g. "logo.png" -->
+                <img src="logo.jpeg" alt="Spice Street Restaurant Logo" onerror="this.parentElement.innerHTML='🍛'; this.parentElement.style.fontSize='2.2rem';">
+            </div>
+            <div class="header-text">
+                <h1>Spice Street Restaurant</h1>
+                <p>Delicious Food • Fast Delivery</p>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="order-layout">
+            <!-- Menu Section -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>🍽️ Food Menu</h2>
+                </div>
+                <div class="menu-grid" id="menuGrid">
+                    <!-- Cards will be added by JavaScript -->
+                </div>
+                <div class="running-total">
+                    <span>Running Total (<span id="itemCount">0</span> item(s))</span>
+                    <span id="runningTotalAmount">₹0</span>
+                </div>
+            </div>
+
+            <!-- Customer Details -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>Customer Details</h2>
+                </div>
+                <form class="customer-form" id="orderForm">
+                    <label>Name <input type="text" id="name" required></label>
+                    <label>Mobile Number <input type="tel" id="mobile" maxlength="10" required></label>
+                    <label>Address <textarea id="address" rows="4" required></textarea></label>
+                    <label>Special Instructions (optional) <textarea id="instructions" rows="2" placeholder="e.g. less spicy, no onions, ring the bell"></textarea></label>
+                    <button type="button" onclick="placeOrder()">Place Order</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="panel summary-panel" id="summaryPanel">
+            <h2>📋 Order Summary</h2>
+            <div class="order-meta">
+                <span><strong>Order ID:</strong> <span id="orderId"></span></span>
+                <span><strong>Estimated Delivery:</strong> <span id="deliveryTime"></span></span>
+            </div>
+            <div id="summaryContent"></div>
+            <div class="grand-total" id="grandTotal">Grand Total = ₹0</div>
+            <div class="thank-you">🎉 Thank You for Ordering!</div>
+            <button class="print-btn" onclick="window.print()">🖨️ Print / Save Receipt</button>
+        </div>
+    </main>
+
+    <script>
+        const menuItems = [
+            { id: "burger", name: "Burger", price: 120, img: "burger.jpg" },
+            { id: "pizza", name: "Pizza", price: 250, img: "pizza.jpg" },
+            { id: "sandwich", name: "Sandwich", price: 90, img: "sandwich.jpg" },
+            { id: "fries", name: "Fries", price: 80, img: "fries.webp" },
+            { id: "juice", name: "Juice", price: 60, img: "juice.avif" }
+        ];
+
+        function createMenuCards() {
+            const container = document.getElementById("menuGrid");
+            container.innerHTML = "";
+
+            menuItems.forEach(item => {
+                const cardHTML = `
+                    <div class="menu-card">
+                        <img src="${item.img}" alt="${item.name}">
+                        <div class="card-body">
+                            <div class="item-name">${item.name}</div>
+                            <div class="item-price">₹${item.price}</div>
+                            <div class="item-controls">
+                                <label>
+                                    <input type="checkbox" id="check-${item.id}" data-id="${item.id}">
+                                    Select
+                                </label>
+                                <input type="number" id="qty-${item.id}" min="1" value="1" disabled>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHTML;
+            });
+
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const qtyInput = document.getElementById(`qty-${this.dataset.id}`);
+                    qtyInput.disabled = !this.checked;
+                    if (!this.checked) qtyInput.value = 1;
+                    updateRunningTotal();
+                });
+            });
+
+            document.querySelectorAll('input[type="number"]').forEach(qtyInput => {
+                qtyInput.addEventListener('input', updateRunningTotal);
+            });
+        }
+
+        function updateRunningTotal() {
+            let total = 0;
+            let count = 0;
+
+            menuItems.forEach(item => {
+                const checked = document.getElementById(`check-${item.id}`).checked;
+                if (checked) {
+                    const qty = parseInt(document.getElementById(`qty-${item.id}`).value) || 1;
+                    total += item.price * qty;
+                    count += qty;
+                }
+            });
+
+            document.getElementById("itemCount").textContent = count;
+            document.getElementById("runningTotalAmount").textContent = `₹${total}`;
+        }
+
+        function placeOrder() {
+            const name = document.getElementById("name").value.trim();
+            const mobile = document.getElementById("mobile").value.trim();
+            const address = document.getElementById("address").value.trim();
+            const instructions = document.getElementById("instructions").value.trim();
+
+            if (!name || !mobile || !address) {
+                alert("Please fill all customer details!");
+                return;
+            }
+            if (mobile.length !== 10 || isNaN(mobile)) {
+                alert("Please enter a valid 10-digit mobile number!");
+                return;
+            }
+
+            let summaryHTML = `<p><strong>Customer:</strong> ${name}</p>`;
+            summaryHTML += `<p><strong>Mobile:</strong> ${mobile}</p>`;
+            summaryHTML += `<p><strong>Address:</strong> ${address}</p>`;
+            if (instructions) {
+                summaryHTML += `<p><strong>Instructions:</strong> ${instructions}</p>`;
+            }
+            let grandTotal = 0;
+            let hasItem = false;
+
+            menuItems.forEach(item => {
+                const checked = document.getElementById(`check-${item.id}`).checked;
+                if (checked) {
+                    hasItem = true;
+                    const qty = parseInt(document.getElementById(`qty-${item.id}`).value) || 1;
+                    const subtotal = item.price * qty;
+                    grandTotal += subtotal;
+                    summaryHTML += `<div class="summary-row"><span>${item.name} × ${qty}</span><span>₹${subtotal}</span></div>`;
+                }
+            });
+
+            if (!hasItem) {
+                alert("Please select at least one item!");
+                return;
+            }
+
+            // Generate a simple order ID and an estimated delivery window
+            const orderId = "SS" + Date.now().toString().slice(-6);
+            const now = new Date();
+            const deliveryStart = new Date(now.getTime() + 30 * 60000);
+            const deliveryEnd = new Date(now.getTime() + 45 * 60000);
+            const formatTime = d => d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            document.getElementById("orderId").textContent = orderId;
+            document.getElementById("deliveryTime").textContent = `${formatTime(deliveryStart)} - ${formatTime(deliveryEnd)}`;
+            document.getElementById("summaryContent").innerHTML = summaryHTML;
+            document.getElementById("grandTotal").innerHTML = `Grand Total = ₹${grandTotal}`;
+            document.getElementById("summaryPanel").classList.add("show");
+            document.getElementById("summaryPanel").scrollIntoView({ behavior: "smooth" });
+        }
+
+        window.onload = createMenuCards;
+    </script>
+</body>
+</html>
